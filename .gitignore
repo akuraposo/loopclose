@@ -1,3 +1,14 @@
 .testmuai/
 __pycache__/
 *.pyc
+*.log
+demo/captures/
+demo/*.webm
+demo/*.mp4
+demo/*.mp3
+demo/*.m4a
+demo/concat*.txt
+demo/check*.png
+demo/state_*.png
+probe_*.py
+record_demo*.py

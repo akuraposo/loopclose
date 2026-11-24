@@ -14,9 +14,11 @@ final run_end event. This is the closed loop the hackathon judges score.
 """
 import json
 import os
-import re
+import shutil
 import subprocess
 import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -26,11 +28,34 @@ CONFIG = APP / "config.js"
 PROOF.mkdir(exist_ok=True)
 
 URL = "http://127.0.0.1:8137/?verdict=failed&evidence=https%3A%2F%2Fexample.com%2Fproof"
-CHROME = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-KANE = r"C:\Users\AGUNG\AppData\Roaming\npm\kane-cli.cmd"
-ENV = dict(os.environ,
-           KANE_CLI_CHROME_PATH=CHROME,
-           KANE_CLI_USER_AGENT="hermes")
+DEFAULT_BRAVE = Path(r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe")
+
+
+def resolve_kane() -> str:
+    kane = (
+        os.environ.get("KANE_CLI_BIN")
+        or shutil.which("kane-cli")
+        or shutil.which("kane-cli.cmd")
+    )
+    if not kane:
+        print("kane-cli not found in PATH. Install with: npm install -g @testmuai/kane-cli")
+        sys.exit(2)
+    return kane
+
+
+def build_env() -> dict:
+    env = dict(os.environ, KANE_CLI_USER_AGENT=os.environ.get("KANE_CLI_USER_AGENT", "hermes"))
+    if not env.get("KANE_CLI_CHROME_PATH") and DEFAULT_BRAVE.exists():
+        env["KANE_CLI_CHROME_PATH"] = str(DEFAULT_BRAVE)
+    return env
+
+
+def check_local_server(base_url: str) -> bool:
+    try:
+        with urllib.request.urlopen(base_url, timeout=3) as resp:
+            return resp.status == 200
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return False
 
 
 def set_variant(buggy: bool):
@@ -41,16 +66,16 @@ def set_variant(buggy: bool):
     print(f"[agent] build variant: {'BUGGY' if buggy else 'FIXED'}")
 
 
-def kane_run(expect: str, tag: str) -> dict:
+def kane_run(kane_bin: str, env: dict, expect: str, tag: str) -> dict:
     objective = (f"Go to {URL} and verify the release gate text shows "
                  f"{expect}. Answer only what the gate text reads.")
     outfile = PROOF / f"{tag}.ndjson"
     print(f"[kane] running: expect {expect} ...")
     with outfile.open("w", encoding="utf-8") as fh:
         proc = subprocess.run(
-            [KANE, "run", objective, "--agent", "--headless",
+            [kane_bin, "run", objective, "--agent", "--headless",
              "--timeout", "240", "--name", tag],
-            cwd=ROOT, env=ENV, stdout=fh, stderr=subprocess.STDOUT,
+            cwd=ROOT, env=env, stdout=fh, stderr=subprocess.STDOUT,
             timeout=360)
     lines = [l for l in outfile.read_text(encoding="utf-8").splitlines()
              if l.strip().startswith("{")]
@@ -72,14 +97,15 @@ def kane_run(expect: str, tag: str) -> dict:
 
 
 def main():
-    server = subprocess.run(["curl", "-s", "-o", "NUL", "-w", "%{http_code}", URL.split("?")[0]],
-                            capture_output=True, text=True)
-    if server.stdout.strip() != "200":
-        print("Local app is not running. Start: python -m http.server 8137 --directory F:/hermes/loopclose/app")
+    if not check_local_server(URL.split("?")[0]):
+        print("Local app is not running. Start: python -m http.server 8137 --directory app")
         sys.exit(2)
 
+    kane_bin = resolve_kane()
+    env = build_env()
+
     set_variant(True)
-    bug = kane_run("GATE: OPEN — deploy allowed", "01-bug-confirmed")
+    bug = kane_run(kane_bin, env, "GATE: OPEN — deploy allowed", "01-bug-confirmed")
     confirmed = bug.get("status") == "passed"
     print(f"[agent] bug confirmed by Kane: {confirmed}")
 
@@ -88,7 +114,7 @@ def main():
         return
 
     set_variant(False)
-    fix = kane_run("GATE: CLOSED", "02-fix-verified")
+    fix = kane_run(kane_bin, env, "GATE: CLOSED", "02-fix-verified")
     if fix.get("status") == "passed":
         print("[agent] fix verified by Kane. Loop closed. Evidence:")
         print(f"  bug: {bug.get('test_url')}")
