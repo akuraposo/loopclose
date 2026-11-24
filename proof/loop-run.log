@@ -1,0 +1,12 @@
+[agent] build variant: BUGGY
+[kane] running: expect GATE: OPEN — deploy allowed ...
+[kane] status=passed credits=10.49
+[kane] evidence: https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86EKV7ZQQ9FKXCF6PP1KETS/dashboard/share/US_VN9GHTKI1NDTGDAB7MHP9YLEUFR85JPIBCDSE8PDRZ79A4B1TNHP357SWBVCXBJ8?type=summary&agentView=true&fqdn=summary-page
+[agent] bug confirmed by Kane: True
+[agent] build variant: FIXED
+[kane] running: expect GATE: CLOSED ...
+[kane] status=passed credits=14.99
+[kane] evidence: https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86ENHS3BW258N2Q540B0WF4/dashboard/share/US_R58GRE9STSLVLT8Y3YLCAWP1EOP6KA08SAU6IVM1FY4ASONS154IE0ROI7CGVH57?type=summary&agentView=true&fqdn=summary-page
+[agent] fix verified by Kane. Loop closed. Evidence:
+  bug: https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86EKV7ZQQ9FKXCF6PP1KETS/dashboard/share/US_VN9GHTKI1NDTGDAB7MHP9YLEUFR85JPIBCDSE8PDRZ79A4B1TNHP357SWBVCXBJ8?type=summary&agentView=true&fqdn=summary-page
+  fix: https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86ENHS3BW258N2Q540B0WF4/dashboard/share/US_R58GRE9STSLVLT8Y3YLCAWP1EOP6KA08SAU6IVM1FY4ASONS154IE0ROI7CGVH57?type=summary&agentView=true&fqdn=summary-page
