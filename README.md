@@ -55,6 +55,9 @@ KANE_CLI_USER_AGENT=hermes kane-cli run \
 |---|---|
 | `app/index.html` | the release gate UI and its verdict logic |
 | `app/config.js` | agent-controlled build flag (`LOOPCLOSE_BUG`) |
+| `app/stage.html` | live operator stage: real app in an iframe + typed real NDJSON |
 | `loop.py` | agent driver: build → Kane → read verdict → fix → Kane |
+| `record_demo_v2.py` | Playwright `recordVideo` driver for `demo/loopclose-demo.mp4` |
 | `proof/*.ndjson` | real Kane run output with evidence links |
-| `demo/` | recorded demo video and narration |
+| `demo/browser-recording.webm` | raw browser recording (before music/narration) |
+| `demo/` | final demo video and narration |

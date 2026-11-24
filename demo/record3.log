@@ -1,0 +1,4 @@
+run data: {'status': 'passed', 'credits': 10.49, 'summary': 'Checked the release candidate panel for the requested release gate status.', 'url': 'https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86EKV7ZQQ9FKXCF6PP1KETS/dashboard/share/US_VN9GHTKI1NDTGDAB7MHP9YLEUFR85JPIBCDSE8PDRZ79A4B1TNHP357SWBVCXBJ8?type=summary&agentView=true&fqdn=summary-page'} {'status': 'passed', 'credits': 14.99, 'summary': 'Reviewed the Release candidate section to check the release gate status.', 'url': 'https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M86ENHS3BW258N2Q540B0WF4/dashboard/share/US_R58GRE9STSLVLT8Y3YLCAWP1EOP6KA08SAU6IVM1FY4ASONS154IE0ROI7CGVH57?type=summary&agentView=true&fqdn=summary-page'}
+raw recorded: F:\hermes\loopclose\demo\captures\page@ff85c4443a07de511b9f78eedda15d1d.webm
+narration duration: 89.232
+final: F:\hermes\loopclose\demo\loopclose-demo.mp4 2740517

@@ -1,8 +1,9 @@
-"""Record a real browser demo of the LoopClose closed loop.
+"""Record a polished demo of the LoopClose closed loop.
 
-Uses Playwright's recordVideo (real browser context, real clicks, real reloads),
-then muxes a natural Edge neural voice narration into an MP4.
-The terminal overlay shows values parsed from the actual proof/*.ndjson files.
+A real Chromium context is recorded with Playwright recordVideo. The frame shown
+is a live operator stage: the actual app runs in an iframe, and the terminal pane
+types the real NDJSON values parsed from proof/*.ndjson. No fake screenshots.
+Narration uses a natural Edge neural voice; the browser recording is kept raw.
 """
 import json
 import re
