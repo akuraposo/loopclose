@@ -1,0 +1,11 @@
+LoopClose. A release gate that refuses to deploy until a real browser proves the flow. Most coding agents write code fast, then say done. This project makes that claim testable. Watch the pipeline at the top: agent, Kane CLI, verdict, fix, gate. It repeats until the proof is real.
+
+Here the gate starts closed. Nothing ships on a claim, and no screenshot in a chat thread counts as evidence. The only thing that opens this gate is a passing verdict from Kane with an evidence link attached. The terminal on the right is streamed from machine readable output, not a typed script.
+
+Now the buggy build. A shortcut in the code opens the gate whenever an evidence link is present, even though the verdict says failed. Kane CLI drives this page in a real browser, reads the gate, and asserts what the release candidate actually does. The run comes back with a structured end event: status passed, credits consumed, and a summary. But look at the final state. The gate text reads, GATE: OPEN — deploy allowed. The run that was supposed to catch the bug just proved the bug exists. On a failed verdict, the gate should never open. Bug confirmed by behavior, not by assumption.
+
+The agent reads that verdict. It parses the end event, reads the final state, and patches app slash config dot j s. The broken flag goes from true to false. That is the closed loop: the verifier output becomes the builder input. No human has to translate the result. The agent acts on it directly and rebuilds, then asks Kane to check again.
+
+Second run. Same failed verdict, same evidence link, but the fixed build. Kane opens the page again in a real browser and asserts the gate reads, GATE: CLOSED. This time the run passes with fresh credits consumed and a new evidence link. The same input that broke the old build now stays shut. The fix is verified by the same tool that caught the regression.
+
+Finally, a passing verdict plus an evidence link arrives. The agent attaches the proof, the gate flips to open, and deploy is allowed. The step timeline fills: gate closed, Kane catches bug, agent patches, Kane verifies fix, proof and ship. Ships, verified, closed loop, craft. Do not trust the agent's word. Trust the run.
