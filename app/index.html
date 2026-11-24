@@ -36,13 +36,31 @@
   ol li{margin:7px 0}
   code{background:#0e1118;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:#c7d2fe}
   .foot{margin-top:32px;color:#697185;font-size:12px}
+  /* state-driven visual language: the app itself changes, not just a badge */
+  body{transition:background .6s ease}
+  body.state-bug{background:radial-gradient(900px 520px at 78% -10%,#5a1d36,transparent),#120a12}
+  body.state-fixed{background:radial-gradient(900px 520px at 78% -10%,#124539,transparent),#08130f}
+  body.state-proof{background:radial-gradient(900px 520px at 78% -10%,#1d5a43,transparent),#08160f}
+  body.state-bug .card:first-child,body.state-fixed .card:first-child,body.state-proof .card:first-child{transition:border-color .5s,box-shadow .5s}
+  body.state-bug .card:first-child{border-color:#fb7185;box-shadow:0 0 34px #fb718533}
+  body.state-fixed .card:first-child{border-color:#4ade80;box-shadow:0 0 34px #4ade8033}
+  body.state-proof .card:first-child{border-color:#5eead4;box-shadow:0 0 40px #5eead444}
+  #banner{display:none;margin:-6px 0 16px;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:#0e1118;font:800 15px/1.3 ui-monospace,Consolas,monospace;letter-spacing:.04em;animation:bannerIn .5s ease-out}
+  body.state-bug #banner,body.state-fixed #banner,body.state-proof #banner{display:block}
+  body.state-bug #banner{color:#fecdd3;border-color:#fb7185;background:#fb718514}
+  body.state-fixed #banner{color:#bbf7d0;border-color:#4ade80;background:#4ade8014}
+  body.state-proof #banner{color:#99f6e4;border-color:#5eead4;background:#5eead414}
+  @keyframes bannerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  #gate{transition:color .4s,transform .4s}
+  body.state-bug #gate,body.state-proof #gate{animation:gatePulse 2s ease-in-out infinite alternate}
+  @keyframes gatePulse{from{text-shadow:0 0 8px currentColor}to{text-shadow:0 0 24px currentColor}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Loop<span>Close</span></h1>
   <p class="lede">A release gate that refuses to deploy until a real browser verifies the flow. The agent fixes what Kane catches, Kane checks again — the loop is the product.</p>
-
+  <div id="banner"></div>
   <div class="grid">
     <section class="card">
       <h2>Release candidate</h2>
@@ -98,8 +116,6 @@ function paint(){
   v.className = 'pill ' + (verdict==='passed' ? 'p-verified' : verdict==='failed' ? 'p-blocked' : 'p-unverified');
   v.textContent = (verdict||'unverified').toUpperCase();
   $('evidence').textContent = evidence ? 'linked ✓' : 'none';
-// Build variant controlled by config.js: buggy app opens the gate on a failed verdict.
-// The fix removes that shortcut so only a passing Kane verdict unlocks deploy.
   const passed = buggy ? !!evidence : (verdict === 'passed' && !!evidence);
   $('gate').textContent = passed ? 'GATE: OPEN — deploy allowed' : 'GATE: CLOSED';
   $('gate').style.color = passed ? 'var(--ok)' : 'var(--bad)';
@@ -108,6 +124,19 @@ function paint(){
     : verdict==='failed'
       ? 'Kane caught a broken flow. The agent must fix it and run Kane again — no deploy on a failed verdict.'
       : 'Deploy is blocked until a passing Kane verdict with an evidence link is present.';
+  // The whole app changes with the state — not only a small badge.
+  const banner = $('banner');
+  document.body.classList.remove('state-bug','state-fixed','state-proof');
+  if(buggy && evidence){
+    document.body.classList.add('state-bug');
+    banner.textContent = '⚠ REGRESSION - FAILED VERDICT OPENED THE GATE';
+  } else if(verdict==='failed'){
+    document.body.classList.add('state-fixed');
+    banner.textContent = '✓ FIX IN PLACE - FAILED VERDICT NOW BLOCKS DEPLOY';
+  } else if(passed){
+    document.body.classList.add('state-proof');
+    banner.textContent = '✓ PROVEN - PASSED VERDICT + EVIDENCE · DEPLOY ALLOWED';
+  }
 }
 $('deploy').addEventListener('click', () => {
   $('agent').textContent = 'requested deploy → gate checked → ' + (($('gate').textContent.includes('OPEN')) ? 'SHIPPED' : 'BLOCKED');
