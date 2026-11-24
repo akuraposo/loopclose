@@ -1,9 +1,10 @@
 # LoopClose
 
-![LoopClose Thumbnail](demo/loopclose-thumbnail.png)
+[![LoopClose Demo Video](demo/loopclose-thumbnail.png)](https://youtu.be/3wC081DVVkk)
 
 A deploy gate that refuses to ship until a real browser proves the flow. The coding agent fixes what Kane catches, Kane checks again, and the verdict travels back to the agent as machine-readable NDJSON. The loop is the product.
 
+- **Demo Video (3:34):** https://youtu.be/3wC081DVVkk
 - **Live Demo:** https://akuraposo.github.io/loopclose/app/
 - **Repository:** https://github.com/akuraposo/loopclose
 

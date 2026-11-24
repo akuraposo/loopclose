@@ -1,7 +1,7 @@
 # LoopClose — launch copy (paste-ready)
 
 Repo: https://github.com/akuraposo/loopclose
-Video: https://www.youtube.com/watch?v=PASTE_VIDEO_ID
+Video: https://youtu.be/3wC081DVVkk
 Direct video file: demo/loopclose-demo.mp4 (3:00, 1080p)
 
 ## X / Twitter
@@ -23,7 +23,7 @@ LoopClose is a release gate that stays closed until Kane CLI drives the real app
 Three bars, one small project: it ships, Kane proved something, and the agent closed the loop.
 
 Repo: https://github.com/akuraposo/loopclose
-Demo: https://www.youtube.com/watch?v=PASTE_VIDEO_ID
+Demo: https://youtu.be/3wC081DVVkk
 
 #KaneCLIHackDay #AIagents #Testing
 
@@ -57,6 +57,6 @@ Repo: https://github.com/akuraposo/loopclose
 
 - GitHub URL: https://github.com/akuraposo/loopclose
 - About: A deploy gate that refuses to ship until Kane CLI verifies the flow in a real browser. Built with Hermes Agent; Kane caught a seeded regression (failed verdict opening the gate), the agent parsed the run_end NDJSON, fixed the build flag, and Kane re-verified. Two real runs with Test Manager evidence links.
-- Demo video: https://www.youtube.com/watch?v=PASTE_VIDEO_ID
-- Live URL: optional — use the repo README if nothing is deployed
+- Demo video: https://youtu.be/3wC081DVVkk
+- Live URL: https://akuraposo.github.io/loopclose/app/
 - Launch buzz: paste the X and LinkedIn/HN post URLs here
