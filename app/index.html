@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LoopClose — deploy gate with real-browser proof</title>
 <style>
-  :root{color-scheme:dark;--bg:#0b0d12;--card:#141821;--line:#252b39;--text:#e7eaf3;--muted:#949cb0;--ok:#4ade80;--bad:#fb7185;--accent:#818cf8}
+  :root{color-scheme:dark;--bg:#0b0d12;--card:#141821;--line:#252b39;--text:#e7eaf3;--muted:#949cb0;--ok:#4ade80;--bad:#fb7185;--accent:#818cf8;--cy:#5eead4}
   *{box-sizing:border-box}
   body{margin:0;background:radial-gradient(900px 500px at 80% -20%,#1d2340,transparent),var(--bg);color:var(--text);font:15px/1.55 ui-sans-serif,system-ui,"Segoe UI",sans-serif}
-  .wrap{max-width:960px;margin:0 auto;padding:40px 24px 90px}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 24px 90px}
   h1{font-size:38px;letter-spacing:-1.2px;margin:0 0 6px}
   h1 span{color:var(--accent)}
-  .lede{color:var(--muted);max-width:720px;margin:0 0 28px}
+  .lede{color:var(--muted);max-width:740px;margin:0 0 28px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
   @media(max-width:740px){.grid{grid-template-columns:1fr}}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
@@ -19,19 +19,29 @@
   label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin:12px 0 5px}
   input,select{width:100%;background:#0e1118;border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 12px;font:inherit}
   input:focus,select:focus{border-color:var(--accent);outline:none}
-  button{margin-top:16px;border:0;border-radius:9px;background:var(--accent);color:#0b0d12;font-weight:700;padding:11px 18px;font:inherit;cursor:pointer}
+  button{margin-top:14px;border:0;border-radius:9px;background:var(--accent);color:#0b0d12;font-weight:700;padding:10px 16px;font:inherit;cursor:pointer}
+  button:hover{opacity:.92}
   button:disabled{opacity:.45;cursor:not-allowed}
   .ghost{background:transparent;border:1px solid var(--line);color:var(--text);margin-left:8px}
+  .mini-btn{margin-top:8px;margin-left:8px;padding:10px 14px;font-size:13px;background:transparent;border:1px solid var(--line);color:var(--cy)}
+  .sandbox{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#0e1118}
+  .sandbox-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
+  .sandbox-row{display:flex;gap:8px;align-items:center}
+  .sandbox-row input{flex:1}
+  .sandbox-row button{margin-top:0;white-space:nowrap}
+  .sandbox-meta{margin-top:10px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+  .sandbox-msg{margin-top:8px;font-size:13px;min-height:20px}
   .state{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
   .row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dashed #202634}
   .row:last-child{border:0}
   .k{color:var(--muted)}
-  .pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+  .pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap}
   .p-unverified{background:#3a3145;color:#cbd0e0}
   .p-blocked{background:#4a2230;color:#fecdd3}
   .p-verified{background:#173c2a;color:#bbf7d0}
   #gate{margin-top:18px;font-size:22px;font-weight:800;letter-spacing:-.4px}
   #why{color:var(--muted);min-height:44px}
+  #link-error{margin-top:6px;font-size:12.5px;color:var(--bad);min-height:18px}
   ol{padding-left:20px;color:var(--muted)}
   ol li{margin:7px 0}
   code{background:#0e1118;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:#c7d2fe}
@@ -72,8 +82,33 @@
       <label for="variant">Build variant</label>
       <select id="variant">
         <option value="good">good — code heals after fix</option>
-        <option value="broken">broken — total stays wrong</option>
+        <option value="broken">broken — injected regression</option>
       </select>
+
+      <div class="sandbox" id="sandbox">
+        <div class="sandbox-head">
+          <span id="sandbox-title">Interactive candidate · Guest checkout</span>
+          <span id="sandbox-badge" class="pill p-unverified">IDLE</span>
+        </div>
+        <div id="checkout-pane">
+          <div class="sandbox-row">
+            <input id="promo" value="WELCOME10" placeholder="Promo code (WELCOME10)">
+            <button id="run-flow" type="button">Run browser check</button>
+          </div>
+          <div class="sandbox-meta">
+            <span>Subtotal: $100.00</span>
+            <span>Computed total: <strong id="flow-total">$100.00</strong></span>
+          </div>
+        </div>
+        <div id="signup-pane" style="display:none">
+          <div class="sandbox-row">
+            <input id="signup-email" value="dev@loopclose.dev" placeholder="you@example.com">
+            <button id="run-signup" type="button">Run browser check</button>
+          </div>
+        </div>
+        <div id="flow-status" class="sandbox-msg">Run a browser check or pass ?verdict= to exercise the gate.</div>
+      </div>
+
       <button id="deploy">Request deploy</button>
       <button id="reset" class="ghost">Reset demo</button>
       <div class="state" aria-live="polite">
@@ -90,12 +125,14 @@
       <ol>
         <li>Agent asks to deploy. Gate is closed until proof arrives.</li>
         <li>Kane CLI drives this page in a real browser and asserts the flow. Its verdict comes back as <code>--agent</code> NDJSON.</li>
-        <li>The gate reads the verdict from <code>?verdict=passed</code> plus an evidence link. No proof, no deploy.</li>
+        <li>The gate reads the verdict from <code>?verdict=passed</code> plus a verified Test Manager evidence link. No proof, no deploy.</li>
         <li>On failure the agent applies a fix and calls Kane again. That is the closed loop — the same thing the judges score.</li>
       </ol>
       <label for="link">Evidence link (evidence.lambdatest.com / Test Manager)</label>
       <input id="link" placeholder="https://test-manager.lambdatest.com/.../dashboard/share/...">
+      <div id="link-error"></div>
       <button id="prove">Apply Kane proof</button>
+      <button id="use-sample-proof" type="button" class="mini-btn">Load real Test Manager proof</button>
     </section>
   </div>
   <p class="foot">LoopClose · built for KaneCLI Online Hackathon · no backend, no secrets, deterministic demo state.</p>
@@ -104,52 +141,186 @@
 <script>
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const flow = params.get('flow');
-const verdict = params.get('verdict');
-const evidence = params.get('evidence');
+const TRUSTED_EVIDENCE_HOSTS = ['lambdatest.com', 'testmuai.com'];
+const SAMPLE_TEST_MANAGER_URL = 'https://test-manager.lambdatest.com/projects/01M86DXG5CJ43MPR0MCCW7DQ1N/test-cases/01M89MMTJGXAZXQS10WENRZ2G0/dashboard/share/US_PKG7OOFRM1AN51MO7ORSOTOZ6KPG98UV3IIRL6APL8UO3M45ZEUSNTXESAMHNDMY?type=summary&agentView=true&fqdn=summary-page';
+
+let activeFlow = params.get('flow') || 'checkout';
+let activeVerdict = params.get('verdict') || '';
+let activeEvidence = params.get('evidence') || '';
+
 // Regression under test: a shortcut flag that wrongly lets a failed verdict through.
-// The flip is agent-controlled via config.js, not the URL — Kane checks the built app.
+// Controlled by the agent via config.js, not the URL — Kane checks the built app.
 const buggy = window.LOOPCLOSE_BUG === true;
 
-function paint(){
+function isTrustedEvidenceUrl(raw) {
+  if (!raw) return false;
+  try {
+    const u = new URL(String(raw).trim());
+    if (u.protocol !== 'https:') return false;
+    const host = u.hostname.toLowerCase();
+    return TRUSTED_EVIDENCE_HOSTS.some(d => host === d || host.endsWith('.' + d));
+  } catch (_) {
+    return false;
+  }
+}
+
+function syncFlowPane(resetState = false) {
+  activeFlow = $('flow').value;
+  const isCheckout = activeFlow === 'checkout';
+  $('checkout-pane').style.display = isCheckout ? 'block' : 'none';
+  $('signup-pane').style.display = isCheckout ? 'none' : 'block';
+  $('sandbox-title').textContent = isCheckout
+    ? 'Interactive candidate · Guest checkout'
+    : 'Interactive candidate · Sign up';
+  if (resetState) {
+    $('sandbox-badge').className = 'pill p-unverified';
+    $('sandbox-badge').textContent = 'IDLE';
+    $('flow-status').style.color = '';
+    $('flow-status').textContent = 'Run a browser check or pass ?verdict= to exercise the gate.';
+    $('flow-total').textContent = '$100.00';
+    $('link-error').textContent = '';
+    if (!params.get('verdict')) {
+      activeVerdict = '';
+      paint();
+    }
+  }
+}
+
+function runCandidateFlow() {
+  const isBroken = $('variant').value === 'broken' || buggy;
+  const badge = $('sandbox-badge');
+  const statusEl = $('flow-status');
+
+  if ($('flow').value === 'checkout') {
+    const code = $('promo').value.trim().toUpperCase();
+    const expectedTotal = code === 'WELCOME10' ? 90 : 100;
+    const actualTotal = isBroken ? 100 : expectedTotal;
+    $('flow-total').textContent = '$' + actualTotal.toFixed(2);
+
+    if (code === 'WELCOME10' && actualTotal === 90) {
+      badge.className = 'pill p-verified';
+      badge.textContent = 'FLOW PASSED';
+      statusEl.style.color = 'var(--ok)';
+      statusEl.textContent = 'WELCOME10 applied (-10%): total updated to $90.00. Ready for Kane proof.';
+      activeVerdict = 'passed';
+    } else {
+      badge.className = 'pill p-blocked';
+      badge.textContent = 'FLOW FAILED';
+      statusEl.style.color = 'var(--bad)';
+      statusEl.textContent = code === 'WELCOME10'
+        ? 'Regression caught: WELCOME10 left total at $100.00 (expected $90.00).'
+        : 'Enter promo code WELCOME10 to verify the 10% guest checkout discount.';
+      activeVerdict = 'failed';
+    }
+  } else {
+    const email = $('signup-email').value.trim();
+    const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isBroken && validEmail) {
+      badge.className = 'pill p-verified';
+      badge.textContent = 'FLOW PASSED';
+      statusEl.style.color = 'var(--ok)';
+      statusEl.textContent = `Verification email sent to ${email}. Ready for Kane proof.`;
+      activeVerdict = 'passed';
+    } else {
+      badge.className = 'pill p-blocked';
+      badge.textContent = 'FLOW FAILED';
+      statusEl.style.color = 'var(--bad)';
+      statusEl.textContent = !validEmail
+        ? 'Enter a valid email address before verifying sign up.'
+        : 'Regression caught: verification email notice failed to render.';
+      activeVerdict = 'failed';
+    }
+  }
+  paint();
+}
+
+function paint() {
   const v = $('verdict');
-  v.className = 'pill ' + (verdict==='passed' ? 'p-verified' : verdict==='failed' ? 'p-blocked' : 'p-unverified');
-  v.textContent = (verdict||'unverified').toUpperCase();
-  $('evidence').textContent = evidence ? 'linked ✓' : 'none';
-  const passed = buggy ? !!evidence : (verdict === 'passed' && !!evidence);
+  v.className = 'pill ' + (activeVerdict === 'passed' ? 'p-verified' : activeVerdict === 'failed' ? 'p-blocked' : 'p-unverified');
+  v.textContent = (activeVerdict || 'unverified').toUpperCase();
+
+  const trusted = isTrustedEvidenceUrl(activeEvidence);
+  $('evidence').textContent = !activeEvidence
+    ? 'none'
+    : trusted ? 'Test Manager linked ✓' : (buggy ? 'linked (unverified host)' : 'rejected (untrusted host)');
+
+  // Fixed gate requires BOTH verdict === 'passed' AND a trusted HTTPS Test Manager / LambdaTest URL.
+  // Buggy build wrongly lets any non-empty evidence open the gate even when verdict !== 'passed'.
+  const passed = buggy ? !!activeEvidence : (activeVerdict === 'passed' && trusted);
   $('gate').textContent = passed ? 'GATE: OPEN — deploy allowed' : 'GATE: CLOSED';
   $('gate').style.color = passed ? 'var(--ok)' : 'var(--bad)';
-  $('why').textContent = passed
-    ? 'Kane proved the flow in a real browser and the evidence link is attached. The agent may ship.'
-    : verdict==='failed'
-      ? 'Kane caught a broken flow. The agent must fix it and run Kane again — no deploy on a failed verdict.'
-      : 'Deploy is blocked until a passing Kane verdict with an evidence link is present.';
+
+  if (passed && buggy && activeVerdict === 'failed') {
+    $('why').textContent = 'Security regression: buggy build allowed a failed verdict with unverified evidence to open the gate.';
+  } else if (passed) {
+    $('why').textContent = 'Kane proved the flow in a real browser and a trusted Test Manager evidence link is attached. The agent may ship.';
+  } else if (activeVerdict === 'passed' && activeEvidence && !trusted) {
+    $('why').textContent = 'Untrusted evidence URL rejected — paste an https:// test-manager.lambdatest.com or evidence.lambdatest.com share link.';
+  } else if (activeVerdict === 'failed') {
+    $('why').textContent = 'Kane caught a broken flow. The agent must fix it and run Kane again — no deploy on a failed verdict.';
+  } else if (activeVerdict === 'passed' && !activeEvidence) {
+    $('why').textContent = 'Flow passed locally. Attach a trusted Test Manager evidence link to unlock the deploy gate.';
+  } else {
+    $('why').textContent = 'Deploy is blocked until a passing Kane verdict with a trusted evidence link is present.';
+  }
+
   // The whole app changes with the state — not only a small badge.
   const banner = $('banner');
-  document.body.classList.remove('state-bug','state-fixed','state-proof');
-  if(buggy && evidence){
+  document.body.classList.remove('state-bug', 'state-fixed', 'state-proof');
+  if (buggy && activeEvidence) {
     document.body.classList.add('state-bug');
     banner.textContent = '⚠ REGRESSION - FAILED VERDICT OPENED THE GATE';
-  } else if(verdict==='failed'){
+  } else if (activeVerdict === 'failed') {
     document.body.classList.add('state-fixed');
     banner.textContent = '✓ FIX IN PLACE - FAILED VERDICT NOW BLOCKS DEPLOY';
-  } else if(passed){
+  } else if (passed) {
     document.body.classList.add('state-proof');
     banner.textContent = '✓ PROVEN - PASSED VERDICT + EVIDENCE · DEPLOY ALLOWED';
   }
 }
+
+$('flow').addEventListener('change', () => syncFlowPane(true));
+$('variant').addEventListener('change', () => syncFlowPane(true));
+$('run-flow').addEventListener('click', runCandidateFlow);
+$('run-signup').addEventListener('click', runCandidateFlow);
+
 $('deploy').addEventListener('click', () => {
-  $('agent').textContent = 'requested deploy → gate checked → ' + (($('gate').textContent.includes('OPEN')) ? 'SHIPPED' : 'BLOCKED');
+  $('agent').textContent = 'requested deploy → gate checked → ' + ($('gate').textContent.includes('OPEN') ? 'SHIPPED' : 'BLOCKED');
 });
+
+$('use-sample-proof').addEventListener('click', () => {
+  $('link').value = SAMPLE_TEST_MANAGER_URL;
+  $('link-error').textContent = '';
+});
+
 $('prove').addEventListener('click', () => {
+  if ($('variant').value === 'broken') {
+    $('link-error').textContent = 'Build variant is broken — switch to good and run the browser check before applying proof.';
+    return;
+  }
   const link = $('link').value.trim();
-  if(!link){ $('why').textContent='Paste the evidence link first.'; return; }
+  if (!link) {
+    $('link-error').textContent = 'Paste a Test Manager / evidence.lambdatest.com link first.';
+    return;
+  }
+  if (!isTrustedEvidenceUrl(link)) {
+    $('link-error').textContent = 'Invalid evidence link: must be https:// on lambdatest.com or testmuai.com.';
+    return;
+  }
+  $('link-error').textContent = '';
   const u = new URL(location.href);
-  u.searchParams.set('verdict','passed'); u.searchParams.set('evidence',link);
+  u.searchParams.set('flow', $('flow').value);
+  u.searchParams.set('verdict', 'passed');
+  u.searchParams.set('evidence', link);
   location.href = u.toString();
 });
+
 $('reset').addEventListener('click', () => { location.href = location.pathname; });
-if(flow) $('flow').value = flow;
+
+if (params.get('flow')) $('flow').value = params.get('flow');
+if (params.get('variant')) $('variant').value = params.get('variant');
+if (activeEvidence) $('link').value = activeEvidence;
+syncFlowPane();
 paint();
 </script>
 </body>
